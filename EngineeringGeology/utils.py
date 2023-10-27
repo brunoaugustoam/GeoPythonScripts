@@ -91,8 +91,7 @@ def acos(valor):
   return acos
 
 
-
-def generate_structures(mu_dir, sigma_dir, mu_dip,sigma_dip, size=500,litho=None):
+def generate_structures(mu_dir=60, sigma_dir=7, mu_dip=45,sigma_dip=5, size=500, litho=None):
     behaved =  int(size-size*0.2)
     dr = np.random.normal(mu_dir, sigma_dir,behaved)
     dr = np.array([int(i) for i in dr])
@@ -161,6 +160,9 @@ def generate_full_data():
     spacing =  {'Sb': 1, 'Sn': 0.1, 'Fr1':5 ,'Fr2':8}
     df['spacing'] = df['structure'].map(spacing)
     return df
+
+
+
 
 def paralellism(dipdir_struct, dipdir_slope, kynematic_window=30):
   a = dipdir_to_xy(dipdir_struct)
@@ -292,7 +294,7 @@ def project_minimum_berm(backbreak,required_containment_width,MRFW,MOW):
     return pmb
 
 
-def estimate_berm_planar_rupture(df,slope_dipdir, slope_dip,slope_height):
+def estimate_berm_planar_rupture(risk,slope_dipdir, slope_dip,slope_height):
   PCM = 0  # Pre-collapsed material
   NB = 1  # Number of benches
   AR = 35  # Angle of repose
@@ -302,12 +304,9 @@ def estimate_berm_planar_rupture(df,slope_dipdir, slope_dip,slope_height):
   MOW = 0 # Minimum operational width
   berm_width =  4.5 + (0.2 * slope_height * NB)
 
-  df['apparent_dip'] = df.apply(lambda x: apparent_dip(slope_dipdir, x['dipdir'], x['dip']), axis=1)
-  df['persistency_height'] = np.sin(np.radians(df['apparent_dip'])) * df['persistency']
 
-  risk = df.query('planar_rupture == True')
 
-  risk['remanecent_height'] = risk.apply(lambda x: (slope_height * NB) - x['persistency_height'] , axis=1)
+  risk['remanecent_height'] = risk.apply(lambda x: slope_height * NB - x['persistency_height'] , axis=1)
   risk['projection_on_slope'] = risk.apply(lambda x: x['remanecent_height'] /  np.sin(np.radians(slope_dip) ), axis=1)
 
   risk['backbreak'] = (risk['persistency_height']/(np.tan(np.radians(risk['dip']))))-(risk['persistency_height']/(np.tan(np.radians(slope_dip))))

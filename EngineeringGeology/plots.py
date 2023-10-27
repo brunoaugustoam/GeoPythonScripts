@@ -53,7 +53,7 @@ def planar_stereogram(df,dipdir_slope_mean,dip_slope_mean, web=False ):
     ax = fig.add_subplot(111, projection='stereonet')
     ax.plane(dipdir_slope_mean-(90-60),90, c='g')
     ax.plane(dipdir_slope_mean-(90+60),90, c='g')
-    ax.plane(dipdir_slope_mean-270,90-dip_slope_mean, c='brown')
+    ax.plane(dipdir_slope_mean-270,90-dip_slope_mean, c='m')
     ax.pole(friction_circle-90, friction_mean_array, c='brown', markersize=1)
     ax.pole(df.dipdir-90, df.dip, c='k',
             markersize=1.5)
@@ -104,7 +104,7 @@ def multi_structure_stereogram(dataframe,web=False):
 def cumulative_hist(samples,web=False):
     q95 = np.round(samples.quantile([.95]),1)
     res = stats.cumfreq(samples,
-                        numbins=25)
+                        numbins=20)
     
     x = res.lowerlimit + np.linspace(0, res.binsize*res.cumcount.size,
                                     res.cumcount.size)
@@ -126,12 +126,14 @@ def cumulative_hist(samples,web=False):
     ax1.set_title('Minumum Project Berm')
     
     # cumulative graph
-    ax2.bar(x, res.cumcount, width=4, color="orange", alpha=1)
+    ax2.bar(x, res.cumcount, width=2, color="g", alpha=1)
 
     # setting up the title
     ax2.set_title(f'Cumulative Minumum Project Berm')
     
     ax2.set_xlim([x.min(), x.max()])
+
+    
 
     ax2.text(0.1,0.95,f'Minimum berm width to hold \nup to 95% of ruptures:{q95.item()}', 
     horizontalalignment='left',

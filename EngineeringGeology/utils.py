@@ -1,9 +1,7 @@
 import numpy as np
-from scipy.stats import mode
-import matplotlib.pyplot as plt
 import pandas as pd
 import mplstereonet as mpl
-from scipy import stats
+
 
 
 def apparent_dip(slope_dipdir,structure_dipdir, structure_dip):

@@ -2,8 +2,7 @@ import numpy as np
 from scipy.stats import mode
 from scipy import stats
 import matplotlib.pyplot as plt
-import pandas as pd
-import mplstereonet as mpl
+
 
 def simple_stereogram(dipdir, dip,web=False):
     mode_dipdir = mode(dipdir).mode
@@ -18,7 +17,7 @@ def simple_stereogram(dipdir, dip,web=False):
     ax.density_contourf(dipdir-90, dip, measurement='poles', cmap='Reds')
     ax.grid()
 
-    plt.text(1.2,1.3,'Pontos plotados: {}\nPlano Medio: {}/{}'.format(dipdir.shape[0],int(mode_dipdir),int(mode_dip)), 
+    plt.text(1.2,1.3,'Plotted Points: {}\nMean Plane: {}/{}'.format(dipdir.shape[0],int(mode_dipdir),int(mode_dip)), 
      horizontalalignment='right',
      verticalalignment='top',wrap=True,
      transform = ax.transAxes)
@@ -60,7 +59,7 @@ def planar_stereogram(df,dipdir_slope_mean,dip_slope_mean, web=False ):
     ax.density_contourf(df.dipdir-90, df.dip, measurement='poles', cmap='Reds', method ='schmidt')
     ax.grid()
 
-    plt.text(1.2,1.3,'Planos instaveis: {}\nTotal: {}\nTalude - {}/{}\nAtrito médio: {}'.format(df.planar_rupture.sum(),len(df.planar_rupture),dipdir_slope_mean,dip_slope_mean,np.round(friction_mean,2)), 
+    plt.text(1.2,1.3,'Unstable: {}\nTotal: {}\nSlope - {}/{}\nMean Friction Angle: {}'.format(df.planar_rupture.sum(),len(df.planar_rupture),dipdir_slope_mean,dip_slope_mean,np.round(friction_mean,2)), 
     horizontalalignment='right',
     verticalalignment='top',wrap=True,
     transform = ax.transAxes)
@@ -88,11 +87,11 @@ def multi_structure_stereogram(dataframe,web=False):
         ax.pole(dipdir-90, dip, c='k',markersize=1.5)
         ax.plane(mode_dipdir-90, mode_dip, c='k')
         
-        plt.text(1.2,1.2+i,'Structure: {}\nPoints: {}\nMean Plane: {}/{}'.format(structure,dipdir.shape[0],int(mode_dipdir),int(mode_dip)), 
+        plt.text(0+i,1.3,'Structure: {} \nPoints: {}\n MeanPlane: {}/{}'.format(structure,dipdir.shape[0],int(mode_dipdir),int(mode_dip)), 
     horizontalalignment='right',
     verticalalignment='top',wrap=True,
     transform = ax.transAxes)
-        i+=0.15
+        i+=0.45
     ax.grid()
 
 
@@ -101,44 +100,35 @@ def multi_structure_stereogram(dataframe,web=False):
     else:
        plt.show()
 
-def cumulative_hist(samples,web=False):
-    q95 = np.round(samples.quantile([.95]),1)
-    res = stats.cumfreq(samples,
-                        numbins=20)
-    
-    x = res.lowerlimit + np.linspace(0, res.binsize*res.cumcount.size,
-                                    res.cumcount.size)
-    
-    # specifying figure size
-    fig = plt.figure(figsize=(10, 4))
-    
-    # adding sub plots
-    ax1 = fig.add_subplot(1, 2, 1)
-    
-    # adding sub plots
-    ax2 = fig.add_subplot(1, 2, 2)
-    
-    # getting histogram using hist function
-    ax1.hist(samples, bins=25,
-            alpha=0.7)
-    
-    # setting up the title
-    ax1.set_title('Minumum Project Berm')
-    
-    # cumulative graph
-    ax2.bar(x, res.cumcount, width=2, color="g", alpha=1)
 
-    # setting up the title
-    ax2.set_title(f'Cumulative Minumum Project Berm')
+def cumulative_hist(samples, web=False):
+    q95 = np.round(samples.quantile([.95]), 1)
+    res = stats.cumfreq(samples, numbins=10)
     
-    ax2.set_xlim([x.min(), x.max()])
-
+    # Normalize cumulative frequency to be between 0 and 1
+    normalized_cumcount = res.cumcount / len(samples)
     
-
-    ax2.text(0.1,0.95,f'Minimum berm width to hold \nup to 95% of ruptures:{q95.item()}', 
-    horizontalalignment='left',
-    verticalalignment='top',wrap=True,
-    transform = ax2.transAxes)
+    x = res.lowerlimit + np.linspace(0, res.binsize * res.cumcount.size, res.cumcount.size)
+    
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+    
+    # Plot histogram
+    ax1.hist(samples, alpha=0.7)
+    ax1.set_title('Minimum Project Berm')
+    ax1.set_xlabel('Required Berm Width (m)')
+    ax1.set_ylabel('Frequency')
+    
+    # Plot cumulative histogram (normalized)
+    ax2.bar(x, normalized_cumcount, color="g", alpha=0.5)
+    ax2.set_title(f'Cumulative Minimum Project Berm')
+    ax2.set_xlim([x.min(), x.max() + 0.5])
+    ax2.set_ylim([0, 1])  # Ensure y-axis is between 0 and 1
+    ax2.set_xlabel('Berm Width (m)')
+    ax2.set_ylabel('Cumulative Frequency (Normalized)')
+    
+    # Add text annotation
+    ax2.text(0.1, 0.95, f'Minimum berm width to hold \nup to 95% of ruptures: {q95.item()} meters', 
+             horizontalalignment='left', verticalalignment='top', wrap=True, transform=ax2.transAxes)
  
     if web:
         return fig

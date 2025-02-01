@@ -5,6 +5,7 @@ import mplstereonet as mpl
 import pandas as pd
 from utils import *
 from plots import *
+
 import streamlit as st
 
 
@@ -18,7 +19,7 @@ np.random.seed(0)
 with st.sidebar:
     data1_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359, value=30)
     data1_dip = st.number_input('Insert Dip',min_value=0, max_value=90, value=45)
-    data1 = generate_structures(data1_dipdir, 7, data1_dip,5, litho=['Quartzite', 'Itabirite'],size=150)
+    data1 = generate_structures(data1_dipdir, 7, data1_dip,5, litho=['Quartzite', 'Itabirite'],size=200)
     data1['structure'] = 'Sb'
     df = data1.copy()
 
@@ -26,14 +27,14 @@ with st.sidebar:
 
         data2_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359)
         data2_dip = st.number_input('Insert Dip',min_value=0, max_value=90)
-        data2 = generate_structures(data2_dipdir, 7, data2_dip,5, litho=['Schist'],size=50)
+        data2 = generate_structures(data2_dipdir, 7, data2_dip,5, litho=['Schist'],size=100)
         data2['structure'] = 'Sn'
         df = pd.concat([df,data2],ignore_index=True)
 
     if st.checkbox('Add 3rd Structure'):
         data3_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359)
         data3_dip = st.number_input('Insert Dip',min_value=0, max_value=90)
-        data3 = generate_structures(data3_dipdir, 7, data3_dip,5, litho=['Quartzite', 'Itabirite'],size=50)
+        data3 = generate_structures(data3_dipdir, 7, data3_dip,5, litho=['Quartzite', 'Itabirite'],size=100)
         data3['structure'] = 'Fr1'
         df = pd.concat([df,data3],ignore_index=True)
 
@@ -80,10 +81,10 @@ col1, col2 = st.columns(2)
 
 
 mss = multi_structure_stereogram(df,web=True)
-col1.pyplot(mss,use_container_width=True)
+col1.pyplot(mss)
 
 ps = planar_stereogram(df,slope_dipdir, slope_dip, web=True )
-col2.pyplot(ps,use_container_width=True)
+col2.pyplot(ps)
 
 
 
@@ -95,4 +96,4 @@ else:
 
     samples = risk['projects_minimum_berm']
     ch = cumulative_hist(samples,web=True)
-    st.pyplot(ch,use_container_width=True)
+    st.pyplot(ch)

@@ -11,10 +11,10 @@ import streamlit as st
 
 st.set_page_config(layout='wide')
 np.random.seed(0)
-# df =generate_full_data()
 
+#Future updates should give the user more control over the inputed data, distribution of the data, and the number of structures to be generated
+#Also add upload file option to input data
 
-# "with" notation
 with st.sidebar:
     data1_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359, value=30)
     data1_dip = st.number_input('Insert Dip',min_value=0, max_value=90, value=45)

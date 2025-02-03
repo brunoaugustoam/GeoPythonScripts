@@ -103,23 +103,26 @@ def multi_structure_stereogram(dataframe,web=False):
 
 def cumulative_hist(samples, web=False):
     q95 = np.round(samples.quantile([.95]), 1)
-    res = stats.cumfreq(samples, numbins=10)
+    n_bins = 10
+    res = stats.cumfreq(samples, numbins=n_bins)
     
     # Normalize cumulative frequency to be between 0 and 1
     normalized_cumcount = res.cumcount / len(samples)
     
-    x = res.lowerlimit + np.linspace(0, res.binsize * res.cumcount.size, res.cumcount.size)
+    x = np.arange(0,n_bins) #res.lowerlimit + np.linspace(0, res.binsize * res.cumcount.size, res.cumcount.size)
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
     
     # Plot histogram
     ax1.hist(samples, alpha=0.7)
+    # ax1.plot(x, res.cumcount, color="g", alpha=0.5)
     ax1.set_title('Minimum Project Berm')
     ax1.set_xlabel('Required Berm Width (m)')
     ax1.set_ylabel('Frequency')
     
     # Plot cumulative histogram (normalized)
     ax2.bar(x, normalized_cumcount, color="g", alpha=0.5)
+    ax2.plot(x, normalized_cumcount, color="g", alpha=0.5)
     ax2.set_title(f'Cumulative Minimum Project Berm')
     ax2.set_xlim([x.min(), x.max() + 0.5])
     ax2.set_ylim([0, 1])  # Ensure y-axis is between 0 and 1

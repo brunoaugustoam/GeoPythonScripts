@@ -25,18 +25,18 @@ with st.sidebar:
 
     if st.checkbox('Add 2nd Structure'):
 
-        data2_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359)
-        data2_dip = st.number_input('Insert Dip',min_value=0, max_value=90)
+        data2_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359, value= 10)
+        data2_dip = st.number_input('Insert Dip',min_value=0, max_value=90, value= 10)
         data2 = generate_structures(data2_dipdir, 7, data2_dip,5, litho=['Schist'],size=100)
         data2['structure'] = 'Sn'
         df = pd.concat([df,data2],ignore_index=True)
 
-    if st.checkbox('Add 3rd Structure'):
-        data3_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359)
-        data3_dip = st.number_input('Insert Dip',min_value=0, max_value=90)
-        data3 = generate_structures(data3_dipdir, 7, data3_dip,5, litho=['Quartzite', 'Itabirite'],size=100)
-        data3['structure'] = 'Fr1'
-        df = pd.concat([df,data3],ignore_index=True)
+        if st.checkbox('Add 3rd Structure ?'):
+            data3_dipdir = st.number_input('Insert DipDir',min_value=0, max_value=359)
+            data3_dip = st.number_input('Insert Dip',min_value=0, max_value=90)
+            data3 = generate_structures(data3_dipdir, 7, data3_dip,5, litho=['Quartzite', 'Itabirite'],size=100)
+            data3['structure'] = 'Fr1'
+            df = pd.concat([df,data3],ignore_index=True)
 
 
 
